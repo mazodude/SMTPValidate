@@ -13,7 +13,8 @@ fclose($fp);
 $emails = explode("\r\n",$contents);
 
 /*Validate single email*/
-$emails = array('example@example.com');
+$email_array = array('Example@example.com');
+$emails = array_map('strtolower', $email_array);
 
 // an optional sender
 // $sender = array('user@example.com');
