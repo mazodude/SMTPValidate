@@ -1,6 +1,15 @@
 <?php
 //Original code downloaded from:
 //http://www.webdigi.co.uk/blog/2009/how-to-check-if-an-email-address-exists-without-sending-an-email/
+/*
+Notes to remember:
+All emails must have no trailing or prepending info
+
+return number meanings
+0 = fail
+1 = pass
+2 = maybe (server down or something)
+*/
 include('smtpvalidate.class.php');
 
 // the email to validate
