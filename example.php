@@ -36,6 +36,6 @@ $result = $SMTP_Valid->validate($emails);
 
 // view results
 foreach ($emails as $key => $value) {
-	echo $value . ':  ' . ($result[$value] ? 'valid' : 'invalid') . "\n";
+	echo $value . ':  ' . ($result[$value][0] ? 'valid' : 'invalid') . " Message: ".$result[$value][1]."\n";
 }
 ?>
