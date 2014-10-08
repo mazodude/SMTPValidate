@@ -7,7 +7,7 @@
 * @author gabe@fijiwebdesign.com
 * @contributers adnan@barakatdesigns.net
 * @contributers mazodude2000@gmail.com
-* @version 0.2
+* @version 0.3
 */
 class SMTP_validateEmail {
 
@@ -40,12 +40,12 @@ class SMTP_validateEmail {
     /**
     * Maximum time to read from socket
     */
-    var $max_read_time = 5;
+    var $max_read_time = 10;
 
     /**
     * username of sender
     */
-    var $from_user = 'user';
+    var $from_user = 'test';
     /**
     * Host Name of sender
     */
@@ -166,8 +166,15 @@ class SMTP_validateEmail {
 
                     if($code != '220') {
                         // MTA gave an error...
-                        foreach($users as $user) {
-                            $results[$user.'@'.$domain] = false;
+                        if($code=='421'){
+                            // server is temp down
+                            foreach($users as $user) {
+                                $results[$user.'@'.$domain] = array(2,$reply);
+                            }
+                        } else {
+                            foreach($users as $user) {
+                                $results[$user.'@'.$domain] = array(0,$reply);
+                            }
                         }
                         continue;
                     }
@@ -189,12 +196,12 @@ class SMTP_validateEmail {
 
                         if ($code == '250') {
                             // you received 250 so the email address was accepted
-                            $results[$user.'@'.$domain] = true;
+                            $results[$user.'@'.$domain] = array(1,$reply);
                         } elseif ($code == '451' || $code == '452') {
                             // you received 451 so the email address was greylisted (or some temporary error occured on the MTA) - so assume is ok
-                            $results[$user.'@'.$domain] = true;
+                            $results[$user.'@'.$domain] = array(1,$reply);
                         } else {
-                            $results[$user.'@'.$domain] = false;
+                            $results[$user.'@'.$domain] = array(0,$reply);
                         }
 
                     }
@@ -207,7 +214,7 @@ class SMTP_validateEmail {
             } else{
                 //something was wrong the host
                 foreach($users as $user) {
-                    $results[$user.'@'.$domain] = false;
+                    $results[$user.'@'.$domain] = array(0,'Host did not respond');
                 }
             }
         }
@@ -240,10 +247,6 @@ class SMTP_validateEmail {
         }
         return array($hosts, $mxweights);
     }
-
-    /**
-    * Simple function to replicate PHP 5 behaviour. http://php.net/microtime
-    */
 
     function debug($str) {
         if ($this->debug) {
